@@ -71,3 +71,7 @@ Thumbs.db
 *.dll
 *.exe
 
+# User defined
+# --------
+asio-1.18.0/doc/
+
