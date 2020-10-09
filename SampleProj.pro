@@ -24,3 +24,10 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     .gitignore
+
+win32 {
+    INCLUDEPATH += E:\Programming\SDK\boost\boost_1_74_0
+    LIBS += -LC/boost/lib \
+}
+LIBS += -lws2_32
+INCLUDEPATH += E:\Programming\SDK\asio\asio-1.18.0\include
