@@ -185,15 +185,5 @@ jobs:
     - uses: actions/upload-artifact@v1
       id: upload_artifact
       with:
-        path: ./${{ env.PLUGIN_NAME }}-${{ env.QT_CREATOR_VERSION }}-${{ matrix.config.artifact }}
-        name: ${{ env.PLUGIN_NAME}}-${{ env.QT_CREATOR_VERSION }}-${{ matrix.config.artifact }}
-
-  release:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v2
-      with:
         name: SampleProjArtifact
         path: results/artifacts/
