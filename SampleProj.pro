@@ -23,6 +23,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    .github/output/aaa \
     .github/workflows/main.yml \
     .gitignore \
     .travis.yml
