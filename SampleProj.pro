@@ -29,7 +29,7 @@ DISTFILES += \
 
 win32 {
     INCLUDEPATH += ./include/boost_1_74_0
-    LIBS += -LC/boost/lib \
+    LIBS += -LC/boost/lib
     LIBS += -lws2_32
 }
 
