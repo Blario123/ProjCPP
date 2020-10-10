@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <string>
 
-#define BOOST_BIND_GLOBAL_PLACEHOLDERS
-
 #ifdef _WIN32
 #define WINVER 0x0A00
 #endif
