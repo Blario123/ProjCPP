@@ -244,7 +244,7 @@ jobs:
         upload_url=`cat ./upload_url`
         echo ::set-output name=upload_url::$upload_url
     - name: Upload Artifact
-      uses: actions/upload-artifact
+      uses: actions/upload-artifact@v2
       with:
         name: SampleProjArtifact
         path: results/artifacts/
