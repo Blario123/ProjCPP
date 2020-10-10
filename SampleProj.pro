@@ -30,6 +30,7 @@ DISTFILES += \
 win32 {
     INCLUDEPATH += ./include/boost_1_74_0
     LIBS += -LC/boost/lib \
+    LIBS += -lws2_32
 }
-LIBS += -lws2_32
+
 INCLUDEPATH += ./include/asio-1.18.0/include
