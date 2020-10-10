@@ -23,12 +23,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    .github/workflows/main.yml \
     .gitignore \
     .travis.yml
 
 win32 {
-    INCLUDEPATH += E:\Programming\SDK\boost\boost_1_74_0
+    INCLUDEPATH += ./include/boost_1_74_0
     LIBS += -LC/boost/lib \
 }
 LIBS += -lws2_32
-INCLUDEPATH += E:\Programming\SDK\asio\asio-1.18.0\include
+INCLUDEPATH += ./include/asio-1.18.0/include
