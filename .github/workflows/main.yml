@@ -186,4 +186,4 @@ jobs:
       id: upload_artifact
       with:
         name: main.o
-        path: ${{ GITHUB_WORKSPACE }}/.github/output/
+        path: GITHUB_WORKSPACE/.github/output/
