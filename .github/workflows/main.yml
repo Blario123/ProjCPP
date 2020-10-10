@@ -186,4 +186,4 @@ jobs:
       id: upload_artifact
       with:
         name: SampleProjArtifact
-        path: ./results/artifacts/
+        path: ./.github/output/
