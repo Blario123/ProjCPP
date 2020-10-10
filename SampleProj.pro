@@ -23,7 +23,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    .gitignore
+    .gitignore \
+    .travis.yml
 
 win32 {
     INCLUDEPATH += E:\Programming\SDK\boost\boost_1_74_0
