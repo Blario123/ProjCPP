@@ -103,18 +103,18 @@ jobs:
 #            endif()
 #          endforeach()
 #        endif()
-        file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/qtcreator" qtcreator_dir)
-        execute_process(
-          COMMAND ${{ steps.qt.outputs.qt_dir }}/bin/qmake
-            $ENV{PLUGIN_PRO}
-            CONFIG+=release
-            QTC_SOURCE="${qtcreator_dir}"
-            QTC_BUILD="${qtcreator_dir}"
-          RESULT_VARIABLE result
-        )
-        if (NOT result EQUAL 0)
-          message(FATAL_ERROR "Bad exit status")
-        endif()
+          file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/qtcreator" qtcreator_dir)
+          execute_process(
+            COMMAND ${{ steps.qt.outputs.qt_dir }}/bin/qmake
+              $ENV{PLUGIN_PRO}
+              CONFIG+=release
+              QTC_SOURCE="${qtcreator_dir}"
+              QTC_BUILD="${qtcreator_dir}"
+            RESULT_VARIABLE result
+          )
+          if (NOT result EQUAL 0)
+            message(FATAL_ERROR "Bad exit status")
+          endif()
     - name: Build
       shell: cmake -P {0}
       run: |
