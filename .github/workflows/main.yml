@@ -1,4 +1,4 @@
-name: QMake Build Matrix
+name: QMake Project Build
 
 on: [push]
 
@@ -16,7 +16,7 @@ jobs:
       matrix:
         config:
         - {
-            name: "Linux Latest x64", artifact: "Linux-x64.zip",
+            name: "Linux Latest x64", artifact: "main.zip",
             os: ubuntu-latest
           }
 
@@ -26,36 +26,18 @@ jobs:
     - name: Installing system libs
       shell: cmake -P {0}
       run: |
-        if ("${{ runner.os }}" STREQUAL "Linux")
-          execute_process(
-            COMMAND sudo apt install libgl1-mesa-dev
-          )
-        endif()
+        execute_process(
+          COMMAND sudo apt install libgl1-mesa-dev
+        )
     - name: Download Qt
       id: qt
       shell: cmake -P {0}
       run: |
         set(qt_version $ENV{QT_VERSION})
         string(REPLACE "." "" qt_version_dotless "${qt_version}")
-        if ("${{ runner.os }}" STREQUAL "Windows")
-          set(url_os "windows_x86")
-          if ("${{ matrix.config.environment_script }}" MATCHES "vcvars64.bat")
-            set(qt_package_name "qt.qt5.${qt_version_dotless}.win64_msvc2017_64")
-            set(qt_dir_prefix "${qt_version}/msvc2017_64")
-          elseif ("${{ matrix.config.environment_script }}" MATCHES "vcvars32.bat")
-            set(qt_package_name "qt.qt5.${qt_version_dotless}.win32_msvc2017")
-            set(qt_dir_prefix "${qt_version}/msvc2017")
-          else()
-          endif()
-        elseif ("${{ runner.os }}" STREQUAL "Linux")
-          set(url_os "linux_x64")
-          set(qt_package_name "qt.qt5.${qt_version_dotless}.gcc_64")
-          set(qt_dir_prefix "${qt_version}/gcc_64")
-        elseif ("${{ runner.os }}" STREQUAL "macOS")
-          set(url_os "mac_x64")
-          set(qt_package_name "qt.qt5.${qt_version_dotless}.clang_64")
-          set(qt_dir_prefix "${qt_version}/clang_64")
-        endif()
+        set(url_os "linux_x64")
+        set(qt_package_name "qt.qt5.${qt_version_dotless}.gcc_64")
+        set(qt_dir_prefix "${qt_version}/gcc_64")
         set(qt_base_url "https://download.qt.io/online/qtsdkrepository/${url_os}/desktop/qt5_${qt_version_dotless}")
         file(DOWNLOAD "${qt_base_url}/Updates.xml" ./Updates.xml SHOW_PROGRESS)
         file(READ ./Updates.xml updates_xml)
@@ -91,23 +73,9 @@ jobs:
       run: |
         string(REGEX MATCH "([0-9]+.[0-9]+).[0-9]+" outvar "$ENV{QT_CREATOR_VERSION}")
         set(qtc_base_url "https://download.qt.io/official_releases/qtcreator/${CMAKE_MATCH_1}/$ENV{QT_CREATOR_VERSION}")
-        if ("${{ runner.os }}" STREQUAL "Windows")
-          set(qtc_output_directory "qtcreator/lib/qtcreator/plugins")
-          set(qtc_binary_name "$ENV{PLUGIN_NAME}4.dll")
-          if ("${{ matrix.config.environment_script }}" MATCHES "vcvars64.bat")
-            set(qtc_platform "windows_msvc2017_x64")
-          elseif ("${{ matrix.config.environment_script }}" MATCHES "vcvars32.bat")
-            set(qtc_platform "windows_msvc2017_x86")
-          endif()
-        elseif ("${{ runner.os }}" STREQUAL "Linux")
-          set(qtc_output_directory "qtcreator/lib/qtcreator/plugins")
-          set(qtc_binary_name "lib$ENV{PLUGIN_NAME}.so")
-          set(qtc_platform "linux_gcc_64_rhel72")
-        elseif ("${{ runner.os }}" STREQUAL "macOS")
-          set(qtc_output_directory "qtcreator/bin/Qt Creator.app/Contents/PlugIns")
-          set(qtc_binary_name "lib$ENV{PLUGIN_NAME}.dylib")
-          set(qtc_platform "mac_x64")
-        endif()
+        set(qtc_output_directory "qtcreator/lib/qtcreator/plugins")
+        set(qtc_binary_name "lib$ENV{PLUGIN_NAME}.so")
+        set(qtc_platform "linux_gcc_64_rhel72")
         # Save the path for other steps
         message("::set-output name=qtc_binary_name::${qtc_binary_name}")
         message("::set-output name=qtc_output_directory::${qtc_output_directory}")
@@ -118,31 +86,23 @@ jobs:
           execute_process(COMMAND
             ${CMAKE_COMMAND} -E tar xvf ../${package}.7z WORKING_DIRECTORY qtcreator)
         endforeach()
-        if ("${{ runner.os }}" STREQUAL "macOS")
-          execute_process(
-            COMMAND ${CMAKE_COMMAND} -E make_directory qtcreator/bin
-            COMMAND ${CMAKE_COMMAND} -E create_symlink
-              "$ENV{GITHUB_WORKSPACE}/qtcreator/Qt Creator.app"
-              "$ENV{GITHUB_WORKSPACE}/qtcreator/bin/Qt Creator.app"
-          )
-        endif()
     - name: Configure
       shell: cmake -P {0}
       run: |
-        if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "x${{ matrix.config.environment_script }}" STREQUAL "x")
-          execute_process(
-            COMMAND "${{ matrix.config.environment_script }}" && set
-            OUTPUT_FILE environment_script_output.txt
-          )
-          file(STRINGS environment_script_output.txt output_lines)
-          foreach(line IN LISTS output_lines)
-            if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
-              set(ENV{${CMAKE_MATCH_1}} "${CMAKE_MATCH_2}")
-              # Set for other steps
-              message("::set-env name=${CMAKE_MATCH_1}::${CMAKE_MATCH_2}")
-            endif()
-          endforeach()
-        endif()
+#        if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "x${{ matrix.config.environment_script }}" STREQUAL "x")
+#          execute_process(
+#            COMMAND "${{ matrix.config.environment_script }}" && set
+#            OUTPUT_FILE environment_script_output.txt
+#          )
+#          file(STRINGS environment_script_output.txt output_lines)
+#          foreach(line IN LISTS output_lines)
+#            if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
+#              set(ENV{${CMAKE_MATCH_1}} "${CMAKE_MATCH_2}")
+#              # Set for other steps
+#              message("::set-env name=${CMAKE_MATCH_1}::${CMAKE_MATCH_2}")
+#            endif()
+#          endforeach()
+#        endif()
         file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/qtcreator" qtcreator_dir)
         execute_process(
           COMMAND ${{ steps.qt.outputs.qt_dir }}/bin/qmake
@@ -158,18 +118,11 @@ jobs:
     - name: Build
       shell: cmake -P {0}
       run: |
-        if ("${{ runner.os }}" STREQUAL "Windows")
-          set(ENV{PATH} "${{ steps.qt.outputs.qt_dir }}/bin/;$ENV{PATH}")
-        else()
-          set(ENV{PATH} "${{ steps.qt.outputs.qt_dir }}/bin/:$ENV{PATH}")
-          set(ENV{LD_LIBRARY_PATH} "qtcreator/lib/Qt/lib:$ENV{LD_LIBRARY_PATH}")
-        endif()
+        set(ENV{PATH} "${{ steps.qt.outputs.qt_dir }}/bin/:$ENV{PATH}")
+        set(ENV{LD_LIBRARY_PATH} "qtcreator/lib/Qt/lib:$ENV{LD_LIBRARY_PATH}")
         include(ProcessorCount)
         ProcessorCount(N)
         set(make_program make -j ${N})
-        if ("${{ runner.os }}" STREQUAL "Windows")
-          set(make_program "qtcreator/bin/jom")
-        endif()
         execute_process(
           COMMAND ${make_program}
           RESULT_VARIABLE result
@@ -182,9 +135,22 @@ jobs:
           ${CMAKE_COMMAND} -E tar cvf ${artifact} --format=zip "${{ steps.qt_creator.outputs.qtc_binary_name }}"
           WORKING_DIRECTORY "${{ steps.qt_creator.outputs.qtc_output_directory }}"
         )
-        pwd
-#    - uses: actions/upload-artifact@v1
-#      id: upload_artifact
-#      with:
-#        name: ${artifact}
-#        path: .github/output/
+    - name: Release Plugin
+        id: create_release
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/create-release@v1.1.4
+        with:
+          tag: 'Release'
+          release_name: 'ProjCPP Release'
+          body: Test Release for ProjCPP
+    - name: Upload Release Asset
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./$a{artifact}
+        asset_name: ${artifact}
+        asset_content_type: application/zip
