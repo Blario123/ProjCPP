@@ -135,13 +135,13 @@ jobs:
           ${CMAKE_COMMAND} -E tar cvf ${artifact} --format=zip "${{ steps.qt_creator.outputs.qtc_binary_name }}"
           WORKING_DIRECTORY "${{ steps.qt_creator.outputs.qtc_output_directory }}"
         )
-    - name: Release Plugin
+    - name: Release Build
       id: create_release
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       uses: actions/create-release@v1.1.4
       with:
-        tag: 'Release'
+        tag_name: 'Release'
         release_name: 'ProjCPP Release'
         body: Test Release for ProjCPP
     - name: Upload Release Asset
