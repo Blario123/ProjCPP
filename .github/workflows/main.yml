@@ -138,11 +138,11 @@ jobs:
     - name: Release Build
       id: create_release
       env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       uses: actions/create-release@v1.1.4
       with:
-        tag_name: 'Release'
-        release_name: 'ProjCPP Release'
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
         body: Test Release for ProjCPP
     - name: Upload Release Asset
       id: upload-release-asset
